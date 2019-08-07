@@ -5,13 +5,13 @@ import java.util.concurrent.locks.Condition;
 public class Main {
     public static void main(String[] args) {
         CloseableReentrantLock lock = new CloseableReentrantLock();
-        Condition conditionA = lock.newCondition();
-        Condition conditionB = lock.newCondition();
-        Condition conditionC = lock.newCondition();
-        Thread printerA = new Thread(new ConditionSyncPrinter(lock, conditionA, conditionB, 'A'));
-        Thread printerB = new Thread(new ConditionSyncPrinter(lock, conditionB, conditionC, 'B'));
-        Thread printerC = new Thread(new ConditionSyncPrinter(lock, conditionC, conditionA, 'C'));
-        Thread signaler = new Thread(new Signaler(lock, conditionA));
+        Condition printA = lock.newCondition();
+        Condition printB = lock.newCondition();
+        Condition printC = lock.newCondition();
+        Thread printerA = new Thread(new ConditionSyncPrinter(lock, printA, printB, 'A'));
+        Thread printerB = new Thread(new ConditionSyncPrinter(lock, printB, printC, 'B'));
+        Thread printerC = new Thread(new ConditionSyncPrinter(lock, printC, printA, 'C'));
+        Thread signaler = new Thread(new Signaler(lock, printA));
         printerA.start();
         printerB.start();
         printerC.start();
@@ -24,8 +24,8 @@ public class Main {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        try(CloseableReentrantLock ignored = lock.open()) {
-            conditionA.signalAll();
+        try(CloseableReentrantLock closeableLock = lock.open()) {
+            printA.signalAll();
         }
     }
 }
