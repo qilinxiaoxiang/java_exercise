@@ -1,6 +1,5 @@
 package tree;
 
-import java.util.LinkedList;
 import java.util.Stack;
 
 public class Traverser {
@@ -60,12 +59,12 @@ public class Traverser {
 
     public void nonRecursivePost(TreeNode root){
         TreeNode temp = root;
-        while (temp != null && temp.visited == false){
+        while (temp != null && !temp.visited) {
             if (temp.left != null && !temp.left.visited) {
                 temp = temp.left;
             } else if (temp.right != null && !temp.right.visited) {
                 temp = temp.right;
-            }else{
+            } else {
                 System.out.print(temp.val);
                 temp.visited = true;
                 temp = root;
